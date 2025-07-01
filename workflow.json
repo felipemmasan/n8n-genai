@@ -1,0 +1,305 @@
+{
+  "name": "Whatsapp",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "instance-connect",
+        "instanceName": "={{ $json.query.instance }}"
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        180
+      ],
+      "id": "2a5123eb-19a6-45cc-a64c-8744b5f14031",
+      "name": "Conectar instancia",
+      "credentials": {
+        "evolutionApi": {
+          "id": "iOIHS08Khf6ZowxH",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "qrcodeBase64",
+        "options": {
+          "fileName": "image.png",
+          "mimeType": "image/png"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        180
+      ],
+      "id": "8bba680f-6eb5-4d06-aacd-e545f598464f",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "32e81d3e-beb6-4df9-957a-821585723a15",
+              "name": "qrcodeBase64",
+              "value": "={{ $json.data.base64.split('base64,')[1] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        20,
+        180
+      ],
+      "id": "750b5490-c9a7-46f9-ad49-973312f08080",
+      "name": "Obtem QRcode"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4aaf4dd7-2993-4912-a20f-6a7347f71935",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "=true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -200,
+        180
+      ],
+      "id": "be392303-f3a3-46ae-bb20-d8b179f62f9b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "path": "initiate-instance",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -660,
+        -80
+      ],
+      "id": "d860fbd8-f3cb-4b16-96f5-80bdab877f5d",
+      "name": "Webhook",
+      "webhookId": "5d499095-cff5-46bd-aa92-f4b2d9a0a0f7"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Redirecionar Instância</title>\n  <style>\n    * {\n      box-sizing: border-box;\n      margin: 0;\n      padding: 0;\n    }\n\n    body {\n      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n      background: linear-gradient(135deg, #0d47a1, #1976d2);\n      height: 100vh;\n      display: flex;\n      justify-content: center;\n      align-items: center;\n      color: white;\n    }\n\n    .container {\n      background-color: rgba(255, 255, 255, 0.05);\n      padding: 2rem;\n      border-radius: 1rem;\n      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);\n      text-align: center;\n      min-width: 300px;\n    }\n\n    h1 {\n      margin-bottom: 1rem;\n      font-size: 1.5rem;\n    }\n\n    input[type=\"text\"] {\n      width: 100%;\n      padding: 0.7rem;\n      border: none;\n      border-radius: 0.5rem;\n      margin-bottom: 1rem;\n      font-size: 1rem;\n    }\n\n    button {\n      background-color: #2196f3;\n      color: white;\n      padding: 0.7rem 1.5rem;\n      border: none;\n      border-radius: 0.5rem;\n      font-size: 1rem;\n      cursor: pointer;\n      transition: background-color 0.3s ease;\n    }\n\n    button:hover {\n      background-color: #1e88e5;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <h1>Informe o nome da instância</h1>\n    <input type=\"text\" id=\"instanceName\" placeholder=\"Nome da instância...\" />\n    <button onclick=\"redirect()\">Acessar</button>\n  </div>\n\n  <script>\n    function redirect() {\n      const name = document.getElementById('instanceName').value.trim();\n      if (!name) {\n        alert('Por favor, preencha o nome da instância.');\n        return;\n      }\n\n      // Link base (você pode alterar aqui)\n      const baseUrl = 'http://localhost:5678/webhook-test/connect';\n\n      // Redireciona com a instância como querystring\n      const url = `${baseUrl}?instance=${encodeURIComponent(name)}`;\n      window.location.href = url;\n    }\n  </script>\n</body>\n</html>\n",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "content-type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -460,
+        -80
+      ],
+      "id": "7588e398-7608-45e3-864f-4dba784fb31c",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "path": "connect",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        180
+      ],
+      "id": "333207b3-a37d-4fcf-ad8c-000853d3ee05",
+      "name": "Webhook1",
+      "webhookId": "82011744-e545-451e-8ae4-6c33d8d334f2"
+    },
+    {
+      "parameters": {
+        "respondWith": "binary",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        460,
+        180
+      ],
+      "id": "5b5c892d-01e4-4406-8048-d4d5f962ce75",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "content": "## Recebe solicitação de Conexão\n",
+        "height": 240,
+        "width": 460,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -700,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "fc4a8fc4-36a4-4b94-9466-b7c65b367a0e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Gera o QRcode com whatsapp",
+        "height": 440,
+        "width": 1400,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -700,
+        120
+      ],
+      "typeVersion": 1,
+      "id": "6a86266f-2a34-4861-b364-42f7dd8baaef",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Telefone já conectado",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -40,
+        400
+      ],
+      "id": "11ba1397-f1d1-4915-bd1d-df11edc907a4",
+      "name": "Respond to Webhook2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Conectar instancia": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtem QRcode": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Obtem QRcode",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Conectar instancia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8eba8503-6ca4-4294-99a7-c6ab93151706",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "06bc56e26f3187ea768f27fc55b7c89576810c7a68158ef2047ded7789a530f8"
+  },
+  "id": "ggW5friAnytmidNC",
+  "tags": []
+}
