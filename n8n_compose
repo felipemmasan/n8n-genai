@@ -1,0 +1,99 @@
+volumes:
+  db_storage:
+  n8n_storage:
+  evolution_store:
+  evolution_instances:
+  redis_data:
+
+services:
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: postgres
+      POSTGRES_NON_ROOT_USER: n8n_user         # Atenção: variável custom, só funciona se criada no init-data.sh
+      POSTGRES_NON_ROOT_PASSWORD: n8n_pass     # Mesma observação acima
+    volumes:
+      - db_storage:/var/lib/postgresql/data
+      - ./init-data.sh:/docker-entrypoint-initdb.d/init-data.sh
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h localhost -U admin -d postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  evolutionAPI:
+    image: atendai/evolution-api:latest
+    restart: always
+    environment:
+      AUTHENTICATION_API_KEY: e9eb2b53-0a00-4750-81d5-6add12521736
+      DATABASE_ENABLED: true
+      DATABASE_PROVIDER: postgresql
+      #Database connection URI
+      DATABASE_CONNECTION_URI: 'postgresql://admin:1234@postgres:5432/evolution?schema=public'
+      # Client name for the database connection
+      DATABASE_CONNECTION_CLIENT_NAME: evolution_exchange
+      # Choose the data you want to save in the application database
+      DATABASE_SAVE_DATA_INSTANCE: true
+      DATABASE_SAVE_DATA_NEW_MESSAGE: true
+      DATABASE_SAVE_MESSAGE_UPDATE: true
+      DATABASE_SAVE_DATA_CONTACTS: true
+      DATABASE_SAVE_DATA_CHATS: true
+      DATABASE_SAVE_DATA_LABELS: true
+      DATABASE_SAVE_DATA_HISTORIC: true
+      CACHE_REDIS_ENABLED: false
+      # URI do seu servidor Redis.
+      CACHE_REDIS_URI=redis: redis:6379
+      # Chave de prefixo para dados do Redis.
+      CACHE_REDIS_PREFIX_KEY: evolution
+      # Tempo que os dados são mantidos em cache
+      CACHE_REDIS_TTL: 604800
+      # Salva as credencias de conexão do whatsapp no redis
+      CACHE_REDIS_SAVE_INSTANCES: true
+      CONFIG_SESSION_PHONE_VERSION: 2.3000.1024343826
+    ports:
+      - 8080:8080
+    volumes:
+      - evolution_store:/evolution/store
+      - evolution_instances:/evolution/instances
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    restart: always
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres           # Conecta pelo nome do serviço, funciona na rede do compose
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: n8n
+      DB_POSTGRESDB_USER: admin
+      DB_POSTGRESDB_PASSWORD: 1234
+      GENERIC_TIMEZONE: America/Sao_Paulo
+      TZ: America/Sao_Paulo
+    ports:
+      - 5678:5678
+    volumes:
+      - n8n_storage:/home/node/.n8n
+    depends_on:
+      postgres:
+        condition: service_healthy
