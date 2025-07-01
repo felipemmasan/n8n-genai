@@ -9,7 +9,7 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        -420,
+        -440,
         180
       ],
       "id": "2a5123eb-19a6-45cc-a64c-8744b5f14031",
@@ -33,7 +33,7 @@
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        240,
+        260,
         180
       ],
       "id": "8bba680f-6eb5-4d06-aacd-e545f598464f",
@@ -56,7 +56,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        20,
+        60,
         180
       ],
       "id": "750b5490-c9a7-46f9-ad49-973312f08080",
@@ -91,7 +91,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -200,
+        -240,
         180
       ],
       "id": "be392303-f3a3-46ae-bb20-d8b179f62f9b",
@@ -116,7 +116,7 @@
     {
       "parameters": {
         "respondWith": "text",
-        "responseBody": "<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Redirecionar Instância</title>\n  <style>\n    * {\n      box-sizing: border-box;\n      margin: 0;\n      padding: 0;\n    }\n\n    body {\n      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n      background: linear-gradient(135deg, #0d47a1, #1976d2);\n      height: 100vh;\n      display: flex;\n      justify-content: center;\n      align-items: center;\n      color: white;\n    }\n\n    .container {\n      background-color: rgba(255, 255, 255, 0.05);\n      padding: 2rem;\n      border-radius: 1rem;\n      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);\n      text-align: center;\n      min-width: 300px;\n    }\n\n    h1 {\n      margin-bottom: 1rem;\n      font-size: 1.5rem;\n    }\n\n    input[type=\"text\"] {\n      width: 100%;\n      padding: 0.7rem;\n      border: none;\n      border-radius: 0.5rem;\n      margin-bottom: 1rem;\n      font-size: 1rem;\n    }\n\n    button {\n      background-color: #2196f3;\n      color: white;\n      padding: 0.7rem 1.5rem;\n      border: none;\n      border-radius: 0.5rem;\n      font-size: 1rem;\n      cursor: pointer;\n      transition: background-color 0.3s ease;\n    }\n\n    button:hover {\n      background-color: #1e88e5;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <h1>Informe o nome da instância</h1>\n    <input type=\"text\" id=\"instanceName\" placeholder=\"Nome da instância...\" />\n    <button onclick=\"redirect()\">Acessar</button>\n  </div>\n\n  <script>\n    function redirect() {\n      const name = document.getElementById('instanceName').value.trim();\n      if (!name) {\n        alert('Por favor, preencha o nome da instância.');\n        return;\n      }\n\n      // Link base (você pode alterar aqui)\n      const baseUrl = 'http://localhost:5678/webhook-test/connect';\n\n      // Redireciona com a instância como querystring\n      const url = `${baseUrl}?instance=${encodeURIComponent(name)}`;\n      window.location.href = url;\n    }\n  </script>\n</body>\n</html>\n",
+        "responseBody": "=<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Redirecionar Instância</title>\n  <style>\n    * {\n      box-sizing: border-box;\n      margin: 0;\n      padding: 0;\n    }\n\n    body {\n      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n      background: linear-gradient(135deg, #0d47a1, #1976d2);\n      height: 100vh;\n      display: flex;\n      justify-content: center;\n      align-items: center;\n      color: white;\n    }\n\n    .container {\n      background-color: rgba(255, 255, 255, 0.05);\n      padding: 2rem;\n      border-radius: 1rem;\n      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);\n      text-align: center;\n      min-width: 300px;\n    }\n\n    h1 {\n      margin-bottom: 1rem;\n      font-size: 1.5rem;\n    }\n\n    input[type=\"text\"] {\n      width: 100%;\n      padding: 0.7rem;\n      border: none;\n      border-radius: 0.5rem;\n      margin-bottom: 1rem;\n      font-size: 1rem;\n    }\n\n    button {\n      background-color: #2196f3;\n      color: white;\n      padding: 0.7rem 1.5rem;\n      border: none;\n      border-radius: 0.5rem;\n      font-size: 1rem;\n      cursor: pointer;\n      transition: background-color 0.3s ease;\n    }\n\n    button:hover {\n      background-color: #1e88e5;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <h1>Informe o nome da instância</h1>\n    <input type=\"text\" id=\"instanceName\" placeholder=\"Nome da instância...\" />\n    <button onclick=\"redirect()\">Acessar</button>\n  </div>\n\n  <script>\n    function redirect() {\n      const name = document.getElementById('instanceName').value.trim();\n      if (!name) {\n        alert('Por favor, preencha o nome da instância.');\n        return;\n      }\n\n      // Link base (você pode alterar aqui)\n      const baseUrl = 'http://localhost:5678/{{ $json.webhookUrl }}/connect';\n\n      // Redireciona com a instância como querystring\n      const url = `${baseUrl}?instance=${encodeURIComponent(name)}`;\n      window.location.href = url;\n    }\n  </script>\n</body>\n</html>\n",
         "options": {
           "responseHeaders": {
             "entries": [
@@ -131,7 +131,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        -460,
+        -240,
         -80
       ],
       "id": "7588e398-7608-45e3-864f-4dba784fb31c",
@@ -161,7 +161,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        460,
+        480,
         180
       ],
       "id": "5b5c892d-01e4-4406-8048-d4d5f962ce75",
@@ -208,11 +208,117 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        -40,
+        180,
         400
       ],
       "id": "11ba1397-f1d1-4915-bd1d-df11edc907a4",
       "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e5b965ed-febc-48ca-bd32-ac19980b1207",
+              "name": "webhookUrl",
+              "value": "={{ $json.webhookUrl.split('/')[3] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -440,
+        -80
+      ],
+      "id": "680d355b-da66-41c3-856d-59fda964bcf5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "messages-upsert",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -520,
+        700
+      ],
+      "id": "032b9415-75b1-406b-b879-5fd1cfe7b42e",
+      "name": "Webhook2",
+      "webhookId": "94e3e241-0044-4e5b-8575-f675b0cedb92"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('Webhook2').item.json.body.instance }}",
+        "remoteJid": "={{ $('Webhook2').item.json.body.sender }}",
+        "messageText": "=Olá {{ $json.body.data.pushName }}, tudo bem? Que posso te ajudar?",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        0,
+        700
+      ],
+      "id": "90375a94-e74a-46cf-bd88-87425fe7a16c",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "iOIHS08Khf6ZowxH",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "09d384ee-706d-4626-afff-6d7c727f513f",
+              "leftValue": "={{ $json.body.instance }}",
+              "rightValue": "Felipe",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "cf823faf-1142-4c56-ac66-790b4c7fcfe6",
+              "leftValue": "={{ $json.body.sender }}",
+              "rightValue": "5511980427681@s.whatsapp.net",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -300,
+        700
+      ],
+      "id": "4a21cc59-d2aa-4b82-9e44-4f113b369ce3",
+      "name": "If1"
     }
   ],
   "pinData": {},
@@ -272,7 +378,7 @@
       "main": [
         [
           {
-            "node": "Respond to Webhook",
+            "node": "Edit Fields",
             "type": "main",
             "index": 0
           }
@@ -289,13 +395,46 @@
           }
         ]
       ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook2": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "8eba8503-6ca4-4294-99a7-c6ab93151706",
+  "versionId": "323e505b-8e2d-4986-80f3-531e31957e01",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "06bc56e26f3187ea768f27fc55b7c89576810c7a68158ef2047ded7789a530f8"
